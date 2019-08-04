@@ -31,15 +31,15 @@ int		check_line(t_header *head, char *line, int fd)
 
 	check = 1;
 	if (ft_strstr(line, NAME_CMD_STRING) != NULL)
-		check = pars_name(head, line, fd);
+		check = pars_line(head->prog_name, line, fd, PROG_NAME_LENGTH);
 	if (ft_strstr(line, COMMENT_CMD_STRING) != NULL)
-		check = pars_comment(head, line, fd);
+		check = pars_line(head->comment, line, fd, COMMENT_LENGTH);
 	if (check == 0)
 		valid_error(2);
 	return (1);
 }
 
-int		pars_name(t_header *head, char *name, int fd)
+int		pars_line(char *line, char *name, int fd, int size)
 {
 	int		i;
 	char	*tmp;
@@ -49,33 +49,14 @@ int		pars_name(t_header *head, char *name, int fd)
 	if (ft_chr_rep(name, '"') < 2)
 		valid_error(2);
 	tmp = parse_string(name);
-	if (ft_strlen(tmp) > PROG_NAME_LENGTH)
+	if (ft_strlen(tmp) > (size_t)size)
 		valid_error(2);
 	while (tmp[++i] != '\0')
-		head->prog_name[i] = tmp[i];
-	while (++i < PROG_NAME_LENGTH)
-		head->prog_name[i] = '\0';
+		line[i] = tmp[i];
+	while (++i < size)
+		line[i] = '\0';
 	free(tmp);
-	make_bin(head->prog_name, fd, PROG_NAME_LENGTH);
-	return (1);
-}
-
-int		pars_comment(t_header *head, char *name, int fd)
-{
-	int		i;
-	char	*tmp;
-
-	i = -1;
-	tmp = NULL;
-	tmp = parse_string(name);
-	if (ft_strlen(tmp) > COMMENT_LENGTH)
-		valid_error(2);
-	while (tmp[++i + 1] != '\0')
-		head->comment[i] = tmp[i];
-	while (++i < COMMENT_LENGTH)
-		head->comment[i] = '\0';
-	free(tmp);
-	make_bin(head->comment, fd, COMMENT_LENGTH);
+	make_bin(line, fd, size);
 	return (1);
 }
 
