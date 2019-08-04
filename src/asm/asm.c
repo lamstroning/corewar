@@ -17,7 +17,7 @@ int		main(int argc, char **argv)
 	t_header	*head;
 	int			fd;
 
-	if (argc <= 1)
+	if (argc != 2)
 		valid_error(1);
 	head = (t_header*)ft_memalloc(sizeof(t_header));
 	fd = init_file(argv[1]);
@@ -45,7 +45,7 @@ int		init_file(char *name)
 	free(fname);
 	fd = open(nametype, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	free(nametype);
-	if (!fd || fd == -1)
-		valid_error(1);
+//	if (!fd || fd == -1)
+//		valid_error(1);
 	return (fd);
 }

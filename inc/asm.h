@@ -27,4 +27,6 @@ void	read_file(t_header *head, int fd, char *name);
 int		check_line(t_header *head, char *line, int fd);
 int		pars_name(t_header *head, char *name, int fd);
 int		pars_comment(t_header *head, char *name, int fd);
+char	*parse_string(char *str);
+
 #endif
