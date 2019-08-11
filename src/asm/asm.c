@@ -12,20 +12,25 @@
 
 #include "../../inc/asm.h"
 
+int			g_fd_new = -1;
+int			g_fd_read = -1;
+
 int		main(int argc, char **argv)
 {
 	t_header	*head;
-	int			fd;
-
+	char		**file;
 	if (argc != 2)
 		valid_error(1);
 	head = (t_header*)ft_memalloc(sizeof(t_header));
-	fd = init_file(argv[1]);
+	g_fd_new = init_file(argv[1]);
 	head->magic = COREWAR_EXEC_MAGIC;
-	print_magic(fd);
-	read_file(head, fd, argv[1]);
+	print_magic();
+	g_fd_read = open(argv[1], O_RDONLY);
+	file = read_file();
+	check_file(head, file);
 	free(head);
-	close(fd);
+	close(g_fd_read);
+	close(g_fd_new);
 	return (0);
 }
 

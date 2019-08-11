@@ -16,7 +16,7 @@ SRCDIR	= ./src
 OBJDIR	= ./obj
 ASM		= /asm/
 
-SRC		= asm.c print.c pars.c
+SRC		= asm.c print.c pars.c op.c operation.c read_arg.c opers_list.c
 OBJ		= $(addprefix $(OBJDIR)/,$(SRC:.c=.o))
 
 CC		= gcc

@@ -12,33 +12,33 @@
 
 #include "../../inc/asm.h"
 
-int		make_bin(char *line, int fd, int size)
+int		make_bin(char *line, int size)
 {
 	int		i;
 
-	if (size % 8 != 0)
-		line = ft_addnchr_e(line, '\0', 8 - (size % 8));
 	if (size == 0)
 		return (0);
 	i = -1;
-	while (++i <= size + 3)
-		ft_putchar_fd(line[i], fd);
+	while (++i < size)
+		ft_putchar_fd(line[i], g_fd_new);
+	while (++i <= size + 4)
+		ft_putchar_fd(0, g_fd_new);
 	return (1);
 }
 
 void	valid_error(int code)
 {
 	if (code == 1)
-		ft_putstr("wrong file");
+		ft_putstr_fd("wrong file", 2);
 	if (code == 2)
-		ft_putstr("wrong name of the champion");
+		ft_putstr_fd("wrong name of the champion", 2);
 	exit(1);
 }
 
-void	print_magic(int fd)
+void	print_magic(void)
 {
-	ft_putchar_fd((char)0, fd);
-	ft_putchar_fd((char)234, fd);
-	ft_putchar_fd((char)131, fd);
-	ft_putchar_fd((char)243, fd);
+	ft_putchar_fd((char)0, g_fd_new);
+	ft_putchar_fd((char)234, g_fd_new);
+	ft_putchar_fd((char)131, g_fd_new);
+	ft_putchar_fd((char)243, g_fd_new);
 }

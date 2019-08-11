@@ -17,16 +17,39 @@
 # include <fcntl.h>
 # include <stdio.h>
 
-int		init_file(char *name);
+extern int	g_fd_new;
+extern int	g_fd_read;
 
-int		make_bin(char *line, int fd, int size);
-void	valid_error(int code);
-void	print_magic(int fd);
+typedef struct		s_lbl
+{
+	char			*name;
+	char			*cmd;
+	struct s_lbl	*next;
+}					t_lbl;
 
-void	read_file(t_header *head, int fd, char *name);
-int		check_line(t_header *head, char *line, int fd);
-int		pars_name(t_header *head, char *name, int fd);
-int		pars_comment(t_header *head, char *name, int fd);
-char	*parse_string(char *str);
+int			init_file(char *name);
+
+int			make_bin(char *line, int size);
+void		valid_error(int code);
+void		print_magic(void);
+
+char		**addlist(char **list, char *str);
+char		**dellist(char **list);
+char		**read_file(void);
+
+void		check_file(t_header *head, char **file);
+int			check_line(t_header *head, char *line, t_lbl *lbl);
+int			pars_line(char *line, char *name, int size);
+char		*parse_string(char *str);
+int			pars_lbl(char *line, t_lbl *lbl);
+char		*save_lbl_cmd(char	*line);
+int			output_oper(char *line);
+int			check_lbl(char *line, t_lbl *lbl);
+int			pars_arg(char *line, int index);
+
+int			read_name(char *name);
+int			read_arg(char *arg, int index);
+char		arg_sum(char byte, int type);
+void		write_arg(char *arg);
 
 #endif

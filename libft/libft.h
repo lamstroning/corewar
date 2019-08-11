@@ -112,8 +112,11 @@ void				ft_upstr(char **str);
 int					ft_strojoin(char **s1, char const *s2);
 int					get_next_line(const int fd, char **line);
 int					save_next_line(char **arr, char **line, int fd);
-
+int					ft_hex_dec(char *hex);
+int					ft_len_nbr(int num);
+char				*ft_atoi_base(int dec, int base);
 char				*ft_strcpy_chr(char *str, char s);
+int					bin_dec(int bin);
 
 int					ft_pow(int n, int pow);
 

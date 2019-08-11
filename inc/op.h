@@ -45,7 +45,7 @@
 # define NBR_LIVE				21
 # define MAX_CHECKS				10
 
-typedef char	t_arg_type;
+typedef char					t_arg_type;
 
 # define T_REG					1
 # define T_DIR					2
@@ -56,12 +56,26 @@ typedef char	t_arg_type;
 # define COMMENT_LENGTH			(2048)
 # define COREWAR_EXEC_MAGIC		0xea83f3
 
-typedef struct			s_header
+typedef struct					s_header
 {
-	unsigned int		magic;
-	char				prog_name[PROG_NAME_LENGTH + 1];
-	unsigned int		prog_size;
-	char				comment[COMMENT_LENGTH + 1];
-}						t_header;
+	unsigned int				magic;
+	char						prog_name[PROG_NAME_LENGTH + 1];
+	unsigned int				prog_size;
+	char						comment[COMMENT_LENGTH + 1];
+}								t_header;
+
+typedef struct					g_s_op
+{
+	char						*name;
+	unsigned char				nb_arg;
+	t_arg_type					args[3];
+	unsigned char				opcode;
+	unsigned int				cycle;
+	char						*description;
+	unsigned char				octal;
+	unsigned char				label;
+}								g_t_op;
+
+extern g_t_op					g_op_tab[17];
 
 #endif

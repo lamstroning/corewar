@@ -12,34 +12,72 @@
 
 #include "../../inc/asm.h"
 
-void	read_file(t_header *head, int fd, char *name)
+char	**read_file(void)
 {
-	int		fd_as;
 	char	*line;
+	char	**list;
+	char	*buff;
 
-	fd_as = open(name, O_RDONLY);
-	while (get_next_line(fd_as, &line) > 0)
+	list = NULL;
+	while (get_next_line(g_fd_read, &line) > 0)
 	{
-		check_line(head, line, fd);
+		if (ft_strequ(line, ""))
+		{
+			free(line);
+			continue ;
+		}
+		if (!(buff = ft_strtrim(line)))
+			return (NULL);
+		free(line);
+		if (!(list = addlist(list, buff)))
+		{
+			dellist(list);
+			free(buff);
+			return (NULL);
+		}
+		free(buff);
+	}
+	return (list);
+}
+
+void	check_file(t_header *head, char **file)
+{
+	char	*line;
+	t_lbl	*lbl;
+	int		i;
+
+	lbl = (t_lbl *)ft_memalloc(sizeof(t_lbl));
+	lbl->next = NULL;
+	i = -1;
+	while (file[++i] != NULL)
+	{
+		line = file[i];
+		if (ft_strlen(line) > 0)
+			check_line(head, line, lbl);
+		if (lbl->name != NULL)
+			lbl = lbl->next;
 		free(line);
 	}
 }
 
-int		check_line(t_header *head, char *line, int fd)
+int		check_line(t_header *head, char *line, t_lbl *lbl)
 {
 	int		check;
 
 	check = 1;
 	if (ft_strstr(line, NAME_CMD_STRING) != NULL)
-		check = pars_line(head->prog_name, line, fd, PROG_NAME_LENGTH);
-	if (ft_strstr(line, COMMENT_CMD_STRING) != NULL)
-		check = pars_line(head->comment, line, fd, COMMENT_LENGTH);
-	if (check == 0)
-		valid_error(2);
+		check = pars_line(head->prog_name, line, PROG_NAME_LENGTH);
+	else if (ft_strstr(line, COMMENT_CMD_STRING) != NULL)
+		check = pars_line(head->comment, line, COMMENT_LENGTH);
+	else
+		check = check_lbl(line, lbl);
+
+	// if (check == 0)
+	// 	valid_error(2);
 	return (1);
 }
 
-int		pars_line(char *line, char *name, int fd, int size)
+int		pars_line(char *line, char *name, int size)
 {
 	int		i;
 	char	*tmp;
@@ -56,7 +94,7 @@ int		pars_line(char *line, char *name, int fd, int size)
 	while (++i < size)
 		line[i] = '\0';
 	free(tmp);
-	make_bin(line, fd, size);
+	make_bin(line, size);
 	return (1);
 }
 

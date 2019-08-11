@@ -25,7 +25,7 @@ ft_strtrim.c ft_tolower.c ft_toupper.c ft_sqrt.c ft_lstlen.c ft_isspace.c ft_oct
 ft_latoi.c ft_hex.c ft_to_char.c ft_expn.c ft_unitoa.c ft_float_itoa.c \
 ft_chrstr.c ft_rewrite.c ft_addchr_e.c ft_addchr_s.c ft_comb.c get_next_line.c\
 ft_chr_rep.c ft_addnchr_e.c ft_addnchr_s.c ft_makemtrx.c ft_upstr.c ft_lowstr.c  ft_strcpy_chr.c\
-ft_pow.c ft_strojoin.c ft_swap.c\
+ft_pow.c ft_strojoin.c ft_swap.c ft_hex_dec.c ft_atoi_base.c ft_len_nbr.c ft_bin_dec.c\
 
 CC		:= gcc
 CFLAGS	:= -Wall -Wextra -Werror
