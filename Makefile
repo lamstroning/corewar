@@ -6,7 +6,7 @@
 #    By: tdontos- <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/08/03 15:22:31 by tdontos-          #+#    #+#              #
-#    Updated: 2019/08/03 15:22:32 by tdontos-         ###   ########.fr        #
+#    Updated: 2019/08/14 17:05:44 by kmurch           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,9 @@ SRCDIR	= ./src
 OBJDIR	= ./obj
 ASM		= /asm/
 
-SRC		= asm.c print.c pars.c op.c operation.c read_arg.c opers_list.c
+SRC		=	asm.c print.c pars.c op.c operation.c read_arg.c opers_list.c valid.c \
+			opers_type.c opers_error.c cmd.c
+	
 OBJ		= $(addprefix $(OBJDIR)/,$(SRC:.c=.o))
 
 CC		= gcc

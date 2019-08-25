@@ -12,7 +12,7 @@
 
 #include "../../inc/asm.h"
 
-int		make_bin(char *line, int size)
+int		make_bin(char *line, int size, int nll)
 {
 	int		i;
 
@@ -21,7 +21,7 @@ int		make_bin(char *line, int size)
 	i = -1;
 	while (++i < size)
 		ft_putchar_fd(line[i], g_fd_new);
-	while (++i <= size + 4)
+	while (++i <= size + nll)
 		ft_putchar_fd(0, g_fd_new);
 	return (1);
 }
@@ -37,8 +37,11 @@ void	valid_error(int code)
 
 void	print_magic(void)
 {
-	ft_putchar_fd((char)0, g_fd_new);
-	ft_putchar_fd((char)234, g_fd_new);
-	ft_putchar_fd((char)131, g_fd_new);
-	ft_putchar_fd((char)243, g_fd_new);
+	u_byte	magic;
+
+	magic.ints = COREWAR_EXEC_MAGIC;
+	ft_putchar_fd(magic.chars[3], g_fd_new);
+	ft_putchar_fd(magic.chars[2], g_fd_new);
+	ft_putchar_fd(magic.chars[1], g_fd_new);
+	ft_putchar_fd(magic.chars[0], g_fd_new);
 }

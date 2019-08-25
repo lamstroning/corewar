@@ -6,7 +6,7 @@
 /*   By: tdontos- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 15:19:40 by tdontos-          #+#    #+#             */
-/*   Updated: 2019/08/03 15:19:41 by tdontos-         ###   ########.fr       */
+/*   Updated: 2019/08/12 17:51:20 by kmurch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,21 @@ int			g_fd_read = -1;
 
 int		main(int argc, char **argv)
 {
+	t_type		*file;
 	t_header	*head;
-	char		**file;
+	t_cmd		*cmd;
+
+	file = read_file(argv[1]);
 	if (argc != 2)
 		valid_error(1);
 	head = (t_header*)ft_memalloc(sizeof(t_header));
 	g_fd_new = init_file(argv[1]);
 	head->magic = COREWAR_EXEC_MAGIC;
 	print_magic();
-	g_fd_read = open(argv[1], O_RDONLY);
-	file = read_file();
-	check_file(head, file);
+	cmd = create_cmd(file, head);
+	// g_fd_read = open(argv[1], O_RDONLY);
+	check_file(head, file, cmd);
+	// dellist(file);
 	free(head);
 	close(g_fd_read);
 	close(g_fd_new);
@@ -54,3 +58,4 @@ int		init_file(char *name)
 //		valid_error(1);
 	return (fd);
 }
+

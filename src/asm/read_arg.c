@@ -12,34 +12,6 @@
 
 #include "../../inc/asm.h"
 
-int		read_arg(char *arg, int index)
-{
-	char	**res;
-	int		i;
-	char	bin;
-	char	*line;
-
-	i = -1;
-	bin = '\0';
-	res = ft_strsplit(arg, SEPARATOR_CHAR);
-	while (++i < g_op_tab[index].nb_arg)
-	{
-		if (res[i] == NULL)
-			valid_error(1);
-		line = ft_strtrim(res[i]);
-		if (ft_strchr(line, DIRECT_CHAR) != NULL)
-			bin = arg_sum(bin, T_DIR);
-		else if (line[0] == 'r')
-			bin = arg_sum(bin, T_REG);
-		else
-			bin = arg_sum(bin, T_IND);
-		free(line);
-	}
-	bin = bin << (3 - g_op_tab[index].nb_arg) * 2;
-	make_bin(&bin, 8);
-	return (0);
-}
-
 char		arg_sum(char byte, int type)
 {
 	byte = byte | type;
@@ -47,13 +19,83 @@ char		arg_sum(char byte, int type)
 	return (byte);
 }
 
-void	write_arg(char *arg)
+int		write_arg(t_type *file, int tdir, t_cmd *cmd)
 {
-	arg++;
+	int		i;
+	u_byte	args;
+	int		size;
+
+	i = -1;
+	while (file[++i].type != NL)
+	{
+		if (file[i].type == INS)
+			continue ;
+		args.ints = 0;
+		size = -1;
+		if (file[i].type == DIR)
+		{
+			if (ft_isdigit(file[i].str[0]) == 0)
+				args.ints = search_lbl_next(file[i].str, cmd);
+			else
+				args.ints = ft_atoi(&file[i].str[0]);
+			args.ints = reverse(args.ints, tdir);
+			size = tdir;
+		}
+		else if (file[i].type == REG)
+		{
+			args.chars[0] = ft_atoi(&file[i].str[1]);;
+			size = 1;
+		}
+		else if (file[i].type == INDIR)
+			args.chars[3] = ft_atoi(file[i].str);
+		if (size != -1)
+			make_bin((char *)args.chars, size, 0);
+	}
+	return (i);
 }
 
-int		read_name(char *name)
+int		search_lbl_prev(char *str, t_cmd *cmd)
 {
-	name = NULL;
-	return (0);
+	t_cmd	*tmp;
+	int		size;
+
+	size = 0;
+	tmp = cmd;
+	while (tmp->prev != NULL)
+	{
+		if (tmp->lbl != NULL && ft_strstr(str, tmp->lbl) != NULL)
+			return (size);
+		tmp = tmp->prev;
+		size -= tmp->size;
+	}
+	// if (size == 0)
+	// 	return (search_lbl_next(str, cmd));
+	return (size);
+}
+
+int		search_lbl_next(char *str, t_cmd *cmd)
+{
+	t_cmd	*tmp;
+	int		size;
+
+	size = 0;
+	tmp = cmd;
+	while (tmp->next != NULL)
+	{
+		if (tmp->lbl != NULL && ft_strstr(str, tmp->lbl) != NULL)
+			return (size);
+		size += tmp->size;
+		tmp = tmp->next;
+	}
+	if (size == 0)
+		return (search_lbl_prev(str, cmd));
+	return (size);
+}
+
+unsigned int reverse(unsigned int x, int cnt)
+{
+	x = (x & 0x00FF00FF) << 8 | (x & 0xFF00FF00) >> 8;
+	if (cnt == 4)
+		x = (x & 0x0000FFFF) << 16 | (x & 0xFFFF0000) >> 16;
+	return (x);
 }

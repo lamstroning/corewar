@@ -6,87 +6,81 @@
 /*   By: tdontos- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/04 12:08:46 by tdontos-          #+#    #+#             */
-/*   Updated: 2019/08/04 12:08:48 by tdontos-         ###   ########.fr       */
+/*   Updated: 2019/08/16 20:13:38 by kmurch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/asm.h"
 
-char	**read_file(void)
+t_type	*read_file(char *name)
 {
 	char	*line;
 	char	**list;
-	char	*buff;
+	int		fd;
 
 	list = NULL;
-	while (get_next_line(g_fd_read, &line) > 0)
+	fd = open(name, O_RDONLY);
+	while (get_next_line(fd, &line) > 0)
 	{
-		if (ft_strequ(line, ""))
-		{
-			free(line);
-			continue ;
-		}
-		if (!(buff = ft_strtrim(line)))
-			return (NULL);
-		free(line);
-		if (!(list = addlist(list, buff)))
+		if (!(list = addlist(list, line)))
 		{
 			dellist(list);
-			free(buff);
+			free(line);
 			return (NULL);
 		}
-		free(buff);
-	}
-	return (list);
-}
-
-void	check_file(t_header *head, char **file)
-{
-	char	*line;
-	t_lbl	*lbl;
-	int		i;
-
-	lbl = (t_lbl *)ft_memalloc(sizeof(t_lbl));
-	lbl->next = NULL;
-	i = -1;
-	while (file[++i] != NULL)
-	{
-		line = file[i];
-		if (ft_strlen(line) > 0)
-			check_line(head, line, lbl);
-		if (lbl->name != NULL)
-			lbl = lbl->next;
 		free(line);
 	}
+	return (settype(list));
 }
 
-int		check_line(t_header *head, char *line, t_lbl *lbl)
+void	check_file(t_header *head, t_type *file, t_cmd *cmd)
 {
-	int		check;
+	int		i;
 
-	check = 1;
-	if (ft_strstr(line, NAME_CMD_STRING) != NULL)
-		check = pars_line(head->prog_name, line, PROG_NAME_LENGTH);
-	else if (ft_strstr(line, COMMENT_CMD_STRING) != NULL)
-		check = pars_line(head->comment, line, COMMENT_LENGTH);
-	else
-		check = check_lbl(line, lbl);
+	i = -1;
+	while (++i != file[0].count)
+	{
+		if (file[i].type == NL)
+			continue ;
+		else if (file[i].type == LABEL || file[i].type == INS)
+		{
+			//delete
+/*Trash*/			if (i == 172)
+/*Trash*/			write(1 , "\0", 1);
+			//delete
+			i += pars_lbl(&file[file[i].type == LABEL ? i + 1 : i], cmd);
+			cmd = cmd == NULL ? NULL : cmd->next;
+		}
+		else if (file[i].type == CMD)
+			check_line(head, &file[i]);
+	}
+}
 
-	// if (check == 0)
-	// 	valid_error(2);
+int		check_line(t_header *head, t_type *file)
+{
+	u_byte	size;
+
+	if (ft_strstr(file->str, NAME_CMD_STRING) != NULL)
+	{
+		pars_line(head->prog_name, PROG_NAME_LENGTH, file);
+		size.ints = head->prog_size;
+		size.ints = reverse(size.ints, 4);
+		make_bin((char *)size.chars, 4, 0);
+	}
+	else if (ft_strstr(file->str, COMMENT_CMD_STRING) != NULL)
+		pars_line(head->comment, COMMENT_LENGTH, file);
 	return (1);
 }
 
-int		pars_line(char *line, char *name, int size)
+void		pars_line(char *line, int size, t_type *file)
 {
 	int		i;
 	char	*tmp;
 
 	i = -1;
-	tmp = NULL;
-	if (ft_chr_rep(name, '"') < 2)
-		valid_error(2);
-	tmp = parse_string(name);
+	while (file->type != STR)
+		++file;
+	tmp = file->str;
 	if (ft_strlen(tmp) > (size_t)size)
 		valid_error(2);
 	while (tmp[++i] != '\0')
@@ -94,31 +88,5 @@ int		pars_line(char *line, char *name, int size)
 	while (++i < size)
 		line[i] = '\0';
 	free(tmp);
-	make_bin(line, size);
-	return (1);
-}
-
-char	*parse_string(char *str)
-{
-	int		i;
-	int		j;
-	char	*tmp;
-	int		len;
-
-	i = 0;
-	j = 0;
-	str = ft_strchr(str, '"');
-	len = ft_strlen(str);
-	tmp = ft_strchr(&str[1], '"');
-	len = len - ft_strlen(tmp);
-	tmp = ft_strnew(len);
-	if (ft_strchr(str, '\n') != NULL)
-		valid_error(3);
-	while (str[++i] != '\0')
-	{
-		if (str[i] == '"')
-			return (tmp);
-		tmp[j++] = str[i];
-	}
-	return (tmp);
+	make_bin(line, size, 4);
 }
